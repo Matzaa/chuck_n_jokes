@@ -1,19 +1,16 @@
 <template>
     <div id="app">
         <Nav />
-        <RandomJoke />
     </div>
 </template>
 
 <script>
 import Nav from "./components/Nav";
-import RandomJoke from "./components/RandomJoke";
 
 export default {
     name: "App",
     components: {
         Nav,
-        RandomJoke,
     },
 };
 </script>

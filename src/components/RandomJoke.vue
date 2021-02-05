@@ -19,13 +19,19 @@ export default {
         };
     },
     mounted() {
-        fetch("https://api.chucknorris.io/jokes/random")
-            .then((res) => res.json())
-            .then((joke) => {
-                console.log("joke", joke.value);
-                this.joke = joke.value;
-            })
-            .catch((err) => console.log("error in fetch", err));
+        this.getjoke();
+        setInterval(this.getjoke, 30000);
+    },
+    methods: {
+        getjoke() {
+            fetch("https://api.chucknorris.io/jokes/random")
+                .then((res) => res.json())
+                .then((joke) => {
+                    console.log("joke", joke.value);
+                    this.joke = joke.value;
+                })
+                .catch((err) => console.log("error in fetch", err));
+        },
     },
 };
 </script>
