@@ -1,13 +1,15 @@
 <template>
     <div id="list" v-if="jokeList">
-        <div>
-            <b-pagination
-                v-model="currentPage"
-                :items="currentDisplay"
-                :per-page="10"
-                :total-rows="rows"
-                aria-controls="my-table"
-            ></b-pagination>
+        <div id="search">
+            <b-form @submit="searchText" @reset="onReset">
+                <b-input-group>
+                    <b-form-input placeholder="text search query">
+                    </b-form-input>
+                    <b-form-input-group-append>
+                        <b-button type="submit">search</b-button>
+                    </b-form-input-group-append>
+                </b-input-group>
+            </b-form>
             <b-dropdown text="filter by category">
                 <b-dropdown-item
                     v-for="cat in jokeCategories"
@@ -18,6 +20,14 @@
                 <b-dropdown-item @click="showAll()">show all</b-dropdown-item>
             </b-dropdown>
         </div>
+        <b-pagination
+            bg-variant="dark"
+            v-model="currentPage"
+            :items="currentDisplay"
+            :per-page="10"
+            :total-rows="rows"
+            aria-controls="my-table"
+        ></b-pagination>
         <b-table
             :items="currentDisplay"
             :per-page="10"
@@ -39,7 +49,7 @@ export default {
         };
     },
     mounted() {
-        // As there is no get request specified by the chucknorris api to get all of the jokes, and the request for random jokes doesn't
+        // As there is no get request specified by the chucknorris api to retrieve all of the jokes, and the request for random jokes doesn't
         // contain the joke's category, I'm first fetching all of the categories and retrieving jokes based on category which is randomly
         // set. As I cannot know the number of all the jokes, I arbitrarily set it to 150 requests so that it should give enough answers.
         // I then filtered out duplicates.
@@ -108,6 +118,20 @@ export default {
 
 <style>
 #list {
-    padding: 100px;
+    padding: 30px 100px;
+}
+
+#search {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.btn {
+    height: 38px;
+}
+
+.input-group {
+    margin-right: 20px;
 }
 </style>

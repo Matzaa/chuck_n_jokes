@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-nav>
+        <b-nav align="center">
             <b-nav-item to="/">Home</b-nav-item> |
             <b-nav-item to="/about">About</b-nav-item>
         </b-nav>
@@ -18,3 +18,5 @@ export default {
     },
 };
 </script>
+
+<style></style>

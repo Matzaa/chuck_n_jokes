@@ -1,11 +1,8 @@
 <template>
     <div v-if="joke">
-        <b-jumbotron
-            bg-variant="dark"
-            text-variant="white"
-            border-variant="dark"
-        >
-            <template #header>{{ joke }}</template>
+        <b-jumbotron id="jumbo" bg-variant="dark" text-variant="white">
+            <!-- <template #header>{{ joke }}</template> -->
+            <h1>{{ joke }}</h1>
         </b-jumbotron>
     </div>
 </template>
@@ -36,4 +33,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+h1 {
+    padding: 60px 100px;
+}
+
+#jumbo {
+    padding: 0;
+}
+</style>
