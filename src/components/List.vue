@@ -1,10 +1,8 @@
 <template>
-    <div id="list">
+    <div class="p-sm-5">
+        <h4 class="pb-3">All jokes</h4>
         <div id="search">
-            <TextSearch
-                v-bind:searchText="searchText"
-                @searchText="searchText"
-            />
+            <TextSearch @searchText="searchText" />
             <b-dropdown text="filter by category">
                 <b-dropdown-item
                     v-for="cat in jokeCategories"
@@ -17,6 +15,7 @@
         </div>
         <div v-if="!errorLoading">
             <b-pagination
+                class="pb-3"
                 bg-variant="dark"
                 v-model="currentPage"
                 :items="currentDisplay"
@@ -167,10 +166,6 @@ export default {
 </script>
 
 <style>
-#list {
-    padding: 30px 100px;
-}
-
 #search {
     display: flex;
     justify-content: space-between;

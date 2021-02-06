@@ -11,6 +11,7 @@
 <script>
 export default {
     name: "TextSearch",
+    props: ["jokeList", "currentDisplay"],
 
     methods: {
         submitText: function(event) {

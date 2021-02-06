@@ -1,8 +1,9 @@
 <template>
     <div>
         <div v-if="!errorFetching">
-            <b-jumbotron id="jumbo" bg-variant="dark" text-variant="white">
-                <h1>{{ joke }}</h1>
+            <b-jumbotron class="p-0" bg-variant="dark" text-variant="white">
+                <p class="pl-sm-5 pt-5 pb-0">random joke:</p>
+                <h1 class=" pt-1 px-sm-5 pb-5">{{ joke }}</h1>
             </b-jumbotron>
             <div class="loading" v-if="loading">A joke is being loaded</div>
         </div>
@@ -51,14 +52,6 @@ export default {
 </script>
 
 <style>
-h1 {
-    padding: 60px 100px;
-}
-
-#jumbo {
-    padding: 0;
-}
-
 .loading {
     color: red;
     padding-left: 100px;
