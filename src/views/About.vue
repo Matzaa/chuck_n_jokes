@@ -1,7 +1,7 @@
 <template>
     <div class="about">
         <h3>Hi, it's me, Matzaa</h3>
-        <h3>I hope you're enjoying this little app.</h3>
+        <h3>I hope you're enjoying this little app</h3>
         <h3>
             Here's the
             <a class="code" href="https://github.com/Matzaa/chuck_n_jokes"
@@ -18,6 +18,6 @@
 }
 
 .about {
-    padding: 30px 100px;
+    padding: 80px 100px;
 }
 </style>

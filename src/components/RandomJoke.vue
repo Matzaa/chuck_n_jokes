@@ -3,6 +3,7 @@
         <b-jumbotron id="jumbo" bg-variant="dark" text-variant="white">
             <h1>{{ joke }}</h1>
         </b-jumbotron>
+        <div class="loading" v-if="loading">A joke is being loaded</div>
     </div>
 </template>
 
@@ -12,6 +13,7 @@ export default {
     data() {
         return {
             joke: "",
+            loading: false,
         };
     },
     mounted() {
@@ -20,12 +22,14 @@ export default {
     },
     methods: {
         getjoke() {
+            this.loading = true;
             fetch("https://api.chucknorris.io/jokes/random")
                 .then((res) => res.json())
                 .then((joke) => {
                     this.joke = joke.value;
                 })
-                .catch((err) => console.log("error in fetch", err));
+                .catch((err) => console.log("error in fetch", err))
+                .finally(() => (this.loading = false));
         },
     },
 };
@@ -38,5 +42,10 @@ h1 {
 
 #jumbo {
     padding: 0;
+}
+
+.loading {
+    color: red;
+    padding-left: 100px;
 }
 </style>

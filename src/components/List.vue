@@ -1,6 +1,6 @@
 <template>
-    <div id="list" v-if="jokeList">
-        <div id="search" v-b-tooltip="'e-mail this joke!'">
+    <div id="list">
+        <div id="search">
             <TextSearch
                 v-bind:searchText="searchText"
                 @searchText="searchText"
@@ -23,6 +23,9 @@
             :total-rows="rows"
             aria-controls="my-table"
         ></b-pagination>
+        <div class="loading" v-if="loadingJokes">
+            Your jokes are being loaded
+        </div>
         <b-table
             :items="currentDisplay"
             :per-page="10"
@@ -49,6 +52,7 @@ export default {
             currentDisplay: [],
             jokeCategories: [],
             filteredList: [],
+            loadingJokes: false,
         };
     },
     mounted() {
@@ -56,7 +60,6 @@ export default {
         // contain the joke's category, I'm first fetching all of the categories and retrieving jokes based on category which is randomly
         // set. As I cannot know the number of all the jokes, I arbitrarily set it to 150 requests so that it should give enough answers.
         // I then filtered out duplicates.
-
         fetch("https://api.chucknorris.io/jokes/categories")
             .then((res) => res.json())
             .then((categories) => {
@@ -66,6 +69,7 @@ export default {
                     let randomNumber = Math.floor(
                         Math.random() * this.jokeCategories.length
                     );
+                    this.loadingJokes = true;
                     fetch(
                         `https://api.chucknorris.io/jokes/random?category=${this.jokeCategories[randomNumber]}`
                     )
@@ -92,12 +96,11 @@ export default {
                         })
                         .catch((err) =>
                             console.log("error in fetching jokes", err)
-                        );
+                        )
+                        .finally(() => (this.loadingJokes = false));
                 }
             })
-            .catch((err) =>
-                console.log("error in fetsching categories: ", err)
-            );
+            .catch((err) => console.log("error in fetching categories: ", err));
     },
     computed: {
         rows() {
@@ -115,6 +118,7 @@ export default {
             this.currentDisplay = this.jokeList;
         },
         searchText: function(val) {
+            this.loadingJokes = true;
             fetch(`https://api.chucknorris.io/jokes/search?query=${val}`)
                 .then((res) => res.json())
                 .then((results) => {
@@ -130,7 +134,9 @@ export default {
                         });
                     }
                     this.currentDisplay = this.jokeList;
-                });
+                })
+                .catch((err) => console.log("error in textsearch", err))
+                .finally(() => (this.loadingJokes = false));
         },
     },
 };
