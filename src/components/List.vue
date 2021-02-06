@@ -89,13 +89,11 @@ export default {
                                 this.jokeList.push(newJoke);
                                 this.currentDisplay = this.jokeList;
                             }
-                            console.log("currentdisplay", this.currentDisplay);
                         })
                         .catch((err) =>
                             console.log("error in fetching jokes", err)
                         );
                 }
-                console.log("this jokelist", this.jokeList);
             })
             .catch((err) =>
                 console.log("error in fetsching categories: ", err)
@@ -117,8 +115,6 @@ export default {
             this.currentDisplay = this.jokeList;
         },
         searchText: function(val) {
-            console.log("searchText fired!", val);
-
             fetch(`https://api.chucknorris.io/jokes/search?query=${val}`)
                 .then((res) => res.json())
                 .then((results) => {
