@@ -15,26 +15,34 @@
                 <b-dropdown-item @click="showAll()">show all</b-dropdown-item>
             </b-dropdown>
         </div>
-        <b-pagination
-            bg-variant="dark"
-            v-model="currentPage"
-            :items="currentDisplay"
-            :per-page="10"
-            :total-rows="rows"
-            aria-controls="my-table"
-        ></b-pagination>
-        <div class="loading" v-if="loadingJokes">
-            Your jokes are being loaded
+        <div v-if="!errorLoading">
+            <b-pagination
+                bg-variant="dark"
+                v-model="currentPage"
+                :items="currentDisplay"
+                :per-page="10"
+                :total-rows="rows"
+                aria-controls="my-table"
+            ></b-pagination>
+            <div class="loading" v-if="loadingJokes">
+                Your jokes are being loaded
+            </div>
+            <b-table
+                :items="currentDisplay"
+                :per-page="10"
+                :current-page="currentPage"
+            >
+                <template #cell(joke)="data">
+                    <span v-html="data.value"></span>
+                </template>
+            </b-table>
         </div>
-        <b-table
-            :items="currentDisplay"
-            :per-page="10"
-            :current-page="currentPage"
-        >
-            <template #cell(joke)="data">
-                <span v-html="data.value"></span>
-            </template>
-        </b-table>
+        <div v-if="errorLoading">
+            <p>There was an error loading your jokes: {{ error }}</p>
+            <b-button v-on:click="getAllJokes">
+                Please try again
+            </b-button>
+        </div>
     </div>
 </template>
 
@@ -53,6 +61,8 @@ export default {
             jokeCategories: [],
             filteredList: [],
             loadingJokes: false,
+            errorLoading: false,
+            error: "",
         };
     },
     mounted() {
@@ -60,47 +70,7 @@ export default {
         // contain the joke's category, I'm first fetching all of the categories and retrieving jokes based on category which is randomly
         // set. As I cannot know the number of all the jokes, I arbitrarily set it to 150 requests so that it should give enough answers.
         // I then filtered out duplicates.
-        fetch("https://api.chucknorris.io/jokes/categories")
-            .then((res) => res.json())
-            .then((categories) => {
-                this.jokeCategories = categories;
-
-                for (let i = 0; i < 150; i++) {
-                    let randomNumber = Math.floor(
-                        Math.random() * this.jokeCategories.length
-                    );
-                    this.loadingJokes = true;
-                    fetch(
-                        `https://api.chucknorris.io/jokes/random?category=${this.jokeCategories[randomNumber]}`
-                    )
-                        .then((res) => res.json())
-                        .then((joke) => {
-                            let double = false;
-                            if (this.jokeList.length > 1) {
-                                this.jokeList.forEach((element) => {
-                                    if (element.joke == joke.value) {
-                                        console.log("it's duplicate");
-                                        double = true;
-                                        return double;
-                                    }
-                                });
-                            }
-                            if (!double) {
-                                let newJoke = {
-                                    joke: `<a href="mailto:?body=${joke.value}" v-b-tooltip title="e-mail this joke!">${joke.value}</a>`,
-                                    category: joke.categories[0],
-                                };
-                                this.jokeList.push(newJoke);
-                                this.currentDisplay = this.jokeList;
-                            }
-                        })
-                        .catch((err) =>
-                            console.log("error in fetching jokes", err)
-                        )
-                        .finally(() => (this.loadingJokes = false));
-                }
-            })
-            .catch((err) => console.log("error in fetching categories: ", err));
+        this.getAllJokes();
     },
     computed: {
         rows() {
@@ -108,6 +78,56 @@ export default {
         },
     },
     methods: {
+        getAllJokes: function() {
+            fetch("https://api.chucknorris.io/jokes/categories")
+                .then((res) => res.json())
+                .then((categories) => {
+                    this.jokeCategories = categories;
+
+                    for (let i = 0; i < 150; i++) {
+                        let randomNumber = Math.floor(
+                            Math.random() * this.jokeCategories.length
+                        );
+                        this.loadingJokes = true;
+                        fetch(
+                            `https://api.chucknorris.io/jokes/random?category=${this.jokeCategories[randomNumber]}`
+                        )
+                            .then((res) => res.json())
+                            .then((joke) => {
+                                this.errorLoading = false;
+                                let double = false;
+                                if (this.jokeList.length > 1) {
+                                    this.jokeList.forEach((element) => {
+                                        if (element.joke == joke.value) {
+                                            console.log("it's duplicate");
+                                            double = true;
+                                            return double;
+                                        }
+                                    });
+                                }
+                                if (!double) {
+                                    let newJoke = {
+                                        joke: `<a href="mailto:?body=${joke.value}" v-b-tooltip title="e-mail this joke!">${joke.value}</a>`,
+                                        category: joke.categories[0],
+                                    };
+                                    this.jokeList.push(newJoke);
+                                    this.currentDisplay = this.jokeList;
+                                }
+                            })
+                            .catch((err) => {
+                                console.log("error in fetching jokes", err);
+                                this.errorLoading = true;
+                                this.error = err;
+                            })
+                            .finally(() => (this.loadingJokes = false));
+                    }
+                })
+                .catch((err) => {
+                    console.log("error in fetching categories: ", err);
+                    this.errorLoading = true;
+                    this.error = err;
+                });
+        },
         filterList: function(categoryName) {
             this.filteredList = this.jokeList.filter(
                 (joke) => joke.category === categoryName
@@ -135,7 +155,11 @@ export default {
                     }
                     this.currentDisplay = this.jokeList;
                 })
-                .catch((err) => console.log("error in textsearch", err))
+                .catch((err) => {
+                    console.log("error in textsearch", err);
+                    this.errorLoading = true;
+                    this.error = err;
+                })
                 .finally(() => (this.loadingJokes = false));
         },
     },
