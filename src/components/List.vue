@@ -1,15 +1,10 @@
 <template>
     <div id="list" v-if="jokeList">
         <div id="search">
-            <b-form @submit="searchText" @reset="onReset">
-                <b-input-group>
-                    <b-form-input placeholder="text search query">
-                    </b-form-input>
-                    <b-form-input-group-append>
-                        <b-button type="submit">search</b-button>
-                    </b-form-input-group-append>
-                </b-input-group>
-            </b-form>
+            <TextSearch
+                v-bind:searchText="searchText"
+                @searchText="searchText"
+            />
             <b-dropdown text="filter by category">
                 <b-dropdown-item
                     v-for="cat in jokeCategories"
@@ -37,8 +32,12 @@
 </template>
 
 <script>
+import TextSearch from "./TextSearch";
 export default {
     name: "List",
+    components: {
+        TextSearch,
+    },
     data() {
         return {
             jokeList: [],
@@ -81,6 +80,7 @@ export default {
                             if (!double) {
                                 let newJoke = {
                                     joke: joke.value,
+                                    // joke: `<a href="mailto:? body=${joke.value}">${joke.value}</a>`,
                                     category: joke.categories[0],
                                 };
                                 this.jokeList.push(newJoke);
@@ -111,6 +111,26 @@ export default {
         },
         showAll: function() {
             this.currentDisplay = this.jokeList;
+        },
+        searchText: function(val) {
+            console.log("searchText fired!", val);
+
+            fetch(`https://api.chucknorris.io/jokes/search?query=${val}`)
+                .then((res) => res.json())
+                .then((results) => {
+                    if (results.result.length < 1) {
+                        this.jokeList = [];
+                    } else {
+                        this.jokeList = [];
+                        results.result.forEach((element) => {
+                            this.jokeList.push({
+                                joke: element.value,
+                                category: element.categories[0],
+                            });
+                        });
+                    }
+                    this.currentDisplay = this.jokeList;
+                });
         },
     },
 };

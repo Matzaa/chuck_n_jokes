@@ -1,7 +1,6 @@
 <template>
     <div v-if="joke">
         <b-jumbotron id="jumbo" bg-variant="dark" text-variant="white">
-            <!-- <template #header>{{ joke }}</template> -->
             <h1>{{ joke }}</h1>
         </b-jumbotron>
     </div>
@@ -24,7 +23,6 @@ export default {
             fetch("https://api.chucknorris.io/jokes/random")
                 .then((res) => res.json())
                 .then((joke) => {
-                    console.log("joke", joke.value);
                     this.joke = joke.value;
                 })
                 .catch((err) => console.log("error in fetch", err));
