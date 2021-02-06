@@ -1,24 +1,11 @@
 # chuck_n_jokes
 
+A fun little app that gives you a random Chuck Norris joke every 30 seconds, as well as a list of most of all of the jokes, with an option to filter by text or category.
+
 ## Project setup
-```
+
+after cloning just cd into chuck_n_jokes and run
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+boom! your app is already runnning locally!
