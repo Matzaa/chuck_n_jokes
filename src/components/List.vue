@@ -1,6 +1,6 @@
 <template>
     <div id="list" v-if="jokeList">
-        <div id="search">
+        <div id="search" v-b-tooltip="'e-mail this joke!'">
             <TextSearch
                 v-bind:searchText="searchText"
                 @searchText="searchText"
@@ -27,7 +27,11 @@
             :items="currentDisplay"
             :per-page="10"
             :current-page="currentPage"
-        ></b-table>
+        >
+            <template #cell(joke)="data">
+                <span v-html="data.value"></span>
+            </template>
+        </b-table>
     </div>
 </template>
 
@@ -79,13 +83,13 @@ export default {
                             }
                             if (!double) {
                                 let newJoke = {
-                                    joke: joke.value,
-                                    // joke: `<a href="mailto:? body=${joke.value}">${joke.value}</a>`,
+                                    joke: `<a href="mailto:?body=${joke.value}" v-b-tooltip title="e-mail this joke!">${joke.value}</a>`,
                                     category: joke.categories[0],
                                 };
                                 this.jokeList.push(newJoke);
                                 this.currentDisplay = this.jokeList;
                             }
+                            console.log("currentdisplay", this.currentDisplay);
                         })
                         .catch((err) =>
                             console.log("error in fetching jokes", err)
@@ -124,7 +128,7 @@ export default {
                         this.jokeList = [];
                         results.result.forEach((element) => {
                             this.jokeList.push({
-                                joke: element.value,
+                                joke: `<a href="mailto:?body=${element.value}" v-b-tooltip title='e-mail this joke!'>${element.value}</a>`,
                                 category: element.categories[0],
                             });
                         });
@@ -153,5 +157,10 @@ export default {
 
 .input-group {
     margin-right: 20px;
+}
+
+a {
+    text-decoration: none !important;
+    color: black !important;
 }
 </style>

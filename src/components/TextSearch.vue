@@ -15,7 +15,6 @@ export default {
     methods: {
         submitText: function(event) {
             event.preventDefault();
-            console.log("please search this", event.target[0].value);
             this.$emit("searchText", event.target[0].value);
             event.target[0].value = "";
         },
